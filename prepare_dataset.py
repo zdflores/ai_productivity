@@ -26,3 +26,28 @@ for subset in data_subsets:
             source_path = os.path.join(source_subset_path, filename)
             destination_path = os.path.join(destination_subset_path, filename)
             shutil.move(source_path, destination_path)
+# track all images in each dataset category.
+images={}
+for label in labels:
+    images[label] = os.listdir(os.path.join(dataset_path, default_subset, label))
+    print(f"label: {label}, images: {len(images[label])}")
+#shuffle the dataset
+for label in labels:
+    random.shuffle(images[label])
+#specify percent of dataset for test/val
+val_percentage = 0.1
+test_percentage = 0.1
+for label in labels:
+    test_count = int(len(images[label]) * test_percentage)
+    val_count = int(len(images[label]) * val_percentage)
+    for i in range(test_count):
+        filename = images[label].pop()
+        source_path = os.path.join(dataset_path, default_subset, label, filename)
+        destination_path = os.path.join(dataset_path, "test", label, filename)
+        shutil.move(source_path, destination_path)
+    for i in range(val_count):
+        filename = images[label].pop()
+        source_path = os.path.join(dataset_path, default_subset, label, filename)
+        destination_path = os.path.join(dataset_path, "val", label, filename)
+        shutil.move(source_path, destination_path)
+
